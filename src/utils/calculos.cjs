@@ -1,4 +1,3 @@
-// Calculates total income
 function calcularIngresos(movimientos) {
     const importes = movimientos.map(
         movimiento => movimiento.importe
@@ -10,7 +9,6 @@ function calcularIngresos(movimientos) {
 }
 
 
-// Calculates total expenses
 function calcularEgresos(movimientos) {
     const importes = movimientos.map(
         movimiento => movimiento.importe
@@ -22,7 +20,6 @@ function calcularEgresos(movimientos) {
 }
 
 
-// Calculates current balance
 function calcularBalance(movimientos) {
     const importes = movimientos.map(
         movimiento => movimiento.importe
@@ -35,8 +32,6 @@ function calcularBalance(movimientos) {
 }
 
 
-// Used to demonstrate Arrange Type 2:
-// Instantiating an object on the SUT
 class CalculadoraGastos {
 
     constructor(movimientos) {
@@ -49,8 +44,6 @@ class CalculadoraGastos {
 }
 
 
-// Used to demonstrate Arrange Type 3:
-// Dependency configured with a mock
 function calcularBalanceDesdeRepositorio(repositorio) {
 
     const movimientos = repositorio.obtenerMovimientos()
@@ -59,10 +52,59 @@ function calcularBalanceDesdeRepositorio(repositorio) {
 }
 
 
+// New function for HW07
+function crearResumen(movimientos) {
+
+    return {
+        ingresos: calcularIngresos(movimientos),
+        egresos: calcularEgresos(movimientos),
+        balance: calcularBalance(movimientos),
+        cantidad: movimientos.length
+    }
+}
+
+
+// New function for HW07
+function validarMovimiento(movimiento) {
+
+    if (!movimiento.descripcion) {
+        throw new Error('Description is required')
+    }
+
+    if (typeof movimiento.importe !== 'number') {
+        throw new Error('Amount must be a number')
+    }
+
+    return true
+}
+
+
+// New function for HW07
+function buscarMovimiento(movimientos, descripcion) {
+
+    return movimientos.find(
+        movimiento => movimiento.descripcion === descripcion
+    )
+}
+
+
+// New function for HW07
+function obtenerDescripciones(movimientos) {
+
+    return movimientos.map(
+        movimiento => movimiento.descripcion
+    )
+}
+
+
 module.exports = {
     calcularIngresos,
     calcularEgresos,
     calcularBalance,
     CalculadoraGastos,
-    calcularBalanceDesdeRepositorio
+    calcularBalanceDesdeRepositorio,
+    crearResumen,
+    validarMovimiento,
+    buscarMovimiento,
+    obtenerDescripciones
 }
