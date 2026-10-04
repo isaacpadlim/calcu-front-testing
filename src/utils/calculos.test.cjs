@@ -6,20 +6,50 @@ const {
     obtenerDescripciones
 } = require('./calculos.cjs')
 
+const {
+    crearMovimiento,
+    clonarMovimientosBase
+} = require('./fixtures.cjs')
 
-describe('Expense Calculator - Activity 7 Assertions', () => {
+
+describe('Expense Calculator - Activity 8 Hooks and Fixtures', () => {
+
+    let movimientos
+    let repositorioMock
+
+
+    // Runs once before all tests
+    beforeAll(() => {
+        repositorioMock = {
+            obtenerMovimientos: jest.fn()
+        }
+    })
+
+
+    // Runs before every test
+    beforeEach(() => {
+        movimientos = clonarMovimientosBase()
+
+        repositorioMock.obtenerMovimientos
+            .mockReturnValue(movimientos)
+    })
+
+
+    // Runs after every test
+    afterEach(() => {
+        jest.clearAllMocks()
+    })
+
+
+    // Runs once after all tests
+    afterAll(() => {
+        repositorioMock = null
+    })
 
 
     // TEST 1
-    // Structural Equivalence and Value Equality
+    // Static Fixture
     test('TC01 should return the complete financial summary', () => {
-
-        // Arrange
-        const movimientos = [
-            { descripcion: 'Quincena', importe: 5000 },
-            { descripcion: 'Mesada', importe: 600 },
-            { descripcion: 'Concierto', importe: -1800 }
-        ]
 
         // Act
         const resultado = crearResumen(movimientos)
@@ -35,17 +65,8 @@ describe('Expense Calculator - Activity 7 Assertions', () => {
 
 
     // TEST 2
-    // Behavioral and Mock Interaction
+    // Static Fixture + Mock
     test('TC02 should call the repository once to calculate balance', () => {
-
-        // Arrange
-        const repositorioMock = {
-            obtenerMovimientos: jest.fn().mockReturnValue([
-                { descripcion: 'Quincena', importe: 5000 },
-                { descripcion: 'Mesada', importe: 600 },
-                { descripcion: 'Concierto', importe: -1800 }
-            ])
-        }
 
         // Act
         const resultado =
@@ -61,15 +82,8 @@ describe('Expense Calculator - Activity 7 Assertions', () => {
 
 
     // TEST 3
-    // Asymmetric and Partial Matchers
+    // Static Fixture
     test('TC03 should contain the expected balance information', () => {
-
-        // Arrange
-        const movimientos = [
-            { descripcion: 'Quincena', importe: 5000 },
-            { descripcion: 'Mesada', importe: 600 },
-            { descripcion: 'Concierto', importe: -1800 }
-        ]
 
         // Act
         const resultado = crearResumen(movimientos)
@@ -85,14 +99,14 @@ describe('Expense Calculator - Activity 7 Assertions', () => {
 
 
     // TEST 4
-    // Exceptions and Async Handling
+    // Dynamic Fixture / Factory Pattern
     test('TC04 should throw an error when description is empty', () => {
 
         // Arrange
-        const movimientoInvalido = {
+        const movimientoInvalido = crearMovimiento({
             descripcion: '',
             importe: 500
-        }
+        })
 
         // Act
         const accion = () =>
@@ -104,19 +118,28 @@ describe('Expense Calculator - Activity 7 Assertions', () => {
 
 
     // TEST 5
-    // Existence and Truthiness
+    // Dynamic Fixture / Factory Pattern
     test('TC05 should find an existing movement', () => {
 
         // Arrange
-        const movimientos = [
-            { descripcion: 'Quincena', importe: 5000 },
-            { descripcion: 'Mesada', importe: 600 },
-            { descripcion: 'Uber', importe: -80 }
+        const movimientosBusqueda = [
+            crearMovimiento({
+                descripcion: 'Quincena',
+                importe: 5000
+            }),
+            crearMovimiento({
+                descripcion: 'Mesada',
+                importe: 600
+            }),
+            crearMovimiento({
+                descripcion: 'Uber',
+                importe: -80
+            })
         ]
 
         // Act
         const resultado =
-            buscarMovimiento(movimientos, 'Quincena')
+            buscarMovimiento(movimientosBusqueda, 'Quincena')
 
         // Assert
         expect(resultado).toBeDefined()
@@ -125,15 +148,8 @@ describe('Expense Calculator - Activity 7 Assertions', () => {
 
 
     // TEST 6
-    // Collections and Strings
+    // Static Fixture
     test('TC06 should contain Quincena in movement descriptions', () => {
-
-        // Arrange
-        const movimientos = [
-            { descripcion: 'Quincena', importe: 5000 },
-            { descripcion: 'Mesada', importe: 600 },
-            { descripcion: 'Uber', importe: -80 }
-        ]
 
         // Act
         const descripciones =
